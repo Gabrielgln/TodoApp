@@ -19,6 +19,8 @@ public class TaskDialogScreen extends javax.swing.JDialog {
     //variaveis globais
     TaskController taskController;
     Project project;
+    boolean taskUpdate = false;
+    int idTaskUpdate = 0;
   
     
     public TaskDialogScreen(java.awt.Frame parent, boolean modal) {
@@ -26,7 +28,19 @@ public class TaskDialogScreen extends javax.swing.JDialog {
         initComponents();
         //***sempre inicia depois do initcomponents nunca antes ou depois***
         taskController = new TaskController();
+        taskUpdate = false;
     }
+    //2 construtor com 1 parametro a mais, para passar quando for aberto uma tela de cadastro de tarefa para edição
+    //utilizando o atributo "taskUpdate"
+    public TaskDialogScreen(java.awt.Frame parent, boolean modal, boolean taskUpdate) {
+        super(parent, modal);
+        initComponents();
+        //***sempre inicia depois do initcomponents nunca antes ou depois***
+        taskController = new TaskController();
+        this.taskUpdate = taskUpdate;
+    }
+    
+    
     
 
     /**
@@ -180,6 +194,7 @@ public class TaskDialogScreen extends javax.swing.JDialog {
     private void jLabelToolBarSaveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelToolBarSaveMouseClicked
         // TODO add your handling code here:
         try {
+            
             //verificando se os campos nome e prazo não estão vazios
             if(!jTextFieldName.getText().isEmpty() && !jFormattedTextFieldDeadline.getText().isEmpty()){
                 //criando um objeto para salvar no banco
@@ -204,8 +219,17 @@ public class TaskDialogScreen extends javax.swing.JDialog {
                 deadline = dateFormat.parse(jFormattedTextFieldDeadline.getText());
                 //setando o objeto
                 task.setDeadline(deadline);
-                
-                taskController.save(task);
+                //verificando se essa tarefa é para editar
+                if(taskUpdate){
+                    //setando o id da tarefa que ta sendo editada, para não ser incrementada um novo id
+                    task.setId(idTaskUpdate);
+                    taskController.update(task);
+                }
+                //não é então salva ela no banco
+                else{
+                    //salvando no banco de dados com o controlador
+                    taskController.save(task);
+                }
                 JOptionPane.showMessageDialog(rootPane,"Tarefa salva com sucesso!");
                 this.dispose();
             }else{
@@ -280,9 +304,10 @@ public class TaskDialogScreen extends javax.swing.JDialog {
      public void setProject(Project project) {
         this.project = project;
     }
-     
+    
+    //função para carregar os valores salvos na tarefa passada como parametro
     public void loadFields(Task task) {
-
+        //colocando em cada campo os atributos correspondentes da tarefa passada como parametro
         jTextFieldName.setText(task.getName());
         jTextAreaDescription.setText(task.getDescription());
         jTextAreaNotes.setText(task.getNotes());
@@ -290,6 +315,8 @@ public class TaskDialogScreen extends javax.swing.JDialog {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         jFormattedTextFieldDeadline.setText(dateFormat.format(task.getDeadline()));
+        //pegando o id da tarefa que ta sendo editada
+        idTaskUpdate = task.getId();
         
         
 

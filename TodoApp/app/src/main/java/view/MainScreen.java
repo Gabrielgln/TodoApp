@@ -551,13 +551,15 @@ public final class MainScreen extends javax.swing.JFrame {
     }
     
     public void changeTask(Task task){
-        
-        TaskDialogScreen taskDialogScreen = new TaskDialogScreen(this, rootPaneCheckingEnabled);
+        //abrinco uma tela de cadastro de tarefa
+        //esse é o 2 construtor da taskDialogScreen que é usado para ***edição da tarefa***
+        TaskDialogScreen taskDialogScreen = new TaskDialogScreen(this, rootPaneCheckingEnabled, true);
         
         int projectIndex = jListProjects.getSelectedIndex();
         Project project = (Project) projectsModel.get(projectIndex);
+        //setando o projeto que essa tarefa pertence
         taskDialogScreen.setProject(project);
-        
+        //função que pega os valores salvos no tarefa selecionada
         taskDialogScreen.loadFields(task);
         taskDialogScreen.setVisible(true);
         

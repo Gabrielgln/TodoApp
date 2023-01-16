@@ -103,12 +103,10 @@ public class Task {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-
+    
     @Override
     public String toString() {
         return this.name;
     }
-    
-    
-
+   
 }
